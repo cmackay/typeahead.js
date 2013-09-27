@@ -30,7 +30,7 @@ var Dataset = (function() {
     this.footer = o.footer;
     this.valueKey = o.valueKey || 'value';
     this.template = compileTemplate(o.template, o.engine, this.valueKey);
-
+    this.render = o.render;
     // used then deleted in #initialize
     this.local = o.local;
     this.prefetch = o.prefetch;

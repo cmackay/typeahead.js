@@ -225,28 +225,36 @@ var DropdownView = (function() {
         this.isEmpty = false;
         this.isOpen && this._show();
 
-        elBuilder = document.createElement('div');
-        fragment = document.createDocumentFragment();
+        if (utils.isFunction(dataset.render)) {
+          var element = $dataset.show().find('.tt-suggestions');
+          element.empty();
+          dataset.render(element, suggestions);
 
-        utils.each(suggestions, function(i, suggestion) {
-          suggestion.dataset = dataset.name;
-          compiledHtml = dataset.template(suggestion.datum);
-          elBuilder.innerHTML = wrapper.replace('%body', compiledHtml);
+        } else {
 
-          $el = $(elBuilder.firstChild)
-          .css(css.suggestion)
-          .data('suggestion', suggestion);
+          elBuilder = document.createElement('div');
+          fragment = document.createDocumentFragment();
 
-          $el.children().each(function() {
-            $(this).css(css.suggestionChild);
+          utils.each(suggestions, function(i, suggestion) {
+            suggestion.dataset = dataset.name;
+            compiledHtml = dataset.template(suggestion.datum);
+            elBuilder.innerHTML = wrapper.replace('%body', compiledHtml);
+
+            $el = $(elBuilder.firstChild)
+            .css(css.suggestion)
+            .data('suggestion', suggestion);
+
+            $el.children().each(function() {
+              $(this).css(css.suggestionChild);
+            });
+
+            fragment.appendChild($el[0]);
           });
 
-          fragment.appendChild($el[0]);
-        });
-
-        // show this dataset in case it was previously empty
-        // and render the new suggestions
-        $dataset.show().find('.tt-suggestions').html(fragment);
+          // show this dataset in case it was previously empty
+          // and render the new suggestions
+          $dataset.show().find('.tt-suggestions').html(fragment);
+        }
       }
 
       // no suggestions to render
