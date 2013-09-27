@@ -388,6 +388,7 @@
             this.footer = o.footer;
             this.valueKey = o.valueKey || "value";
             this.template = compileTemplate(o.template, o.engine, this.valueKey);
+            this.render = o.render;
             this.local = o.local;
             this.prefetch = o.prefetch;
             this.remote = o.remote;
@@ -821,19 +822,25 @@
                 if (suggestions.length > 0) {
                     this.isEmpty = false;
                     this.isOpen && this._show();
-                    elBuilder = document.createElement("div");
-                    fragment = document.createDocumentFragment();
-                    utils.each(suggestions, function(i, suggestion) {
-                        suggestion.dataset = dataset.name;
-                        compiledHtml = dataset.template(suggestion.datum);
-                        elBuilder.innerHTML = wrapper.replace("%body", compiledHtml);
-                        $el = $(elBuilder.firstChild).css(css.suggestion).data("suggestion", suggestion);
-                        $el.children().each(function() {
-                            $(this).css(css.suggestionChild);
+                    if (utils.isFunction(dataset.render)) {
+                        var element = $dataset.show().find(".tt-suggestions");
+                        element.empty();
+                        dataset.render(element, suggestions);
+                    } else {
+                        elBuilder = document.createElement("div");
+                        fragment = document.createDocumentFragment();
+                        utils.each(suggestions, function(i, suggestion) {
+                            suggestion.dataset = dataset.name;
+                            compiledHtml = dataset.template(suggestion.datum);
+                            elBuilder.innerHTML = wrapper.replace("%body", compiledHtml);
+                            $el = $(elBuilder.firstChild).css(css.suggestion).data("suggestion", suggestion);
+                            $el.children().each(function() {
+                                $(this).css(css.suggestionChild);
+                            });
+                            fragment.appendChild($el[0]);
                         });
-                        fragment.appendChild($el[0]);
-                    });
-                    $dataset.show().find(".tt-suggestions").html(fragment);
+                        $dataset.show().find(".tt-suggestions").html(fragment);
+                    }
                 } else {
                     this.clearSuggestions(dataset.name);
                 }
