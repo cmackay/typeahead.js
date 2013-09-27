@@ -19,7 +19,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     version: grunt.file.readJSON('package.json').version,
 
-    buildDir: 'dist',
+    buildDir: '.',
 
     banner: [
       '/*!',
